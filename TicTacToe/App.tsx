@@ -16,7 +16,7 @@ import {
   View,
 } from 'react-native';
 
-const defaultBoard = [
+const defaultBoard: Array<Array<number | null>> = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
@@ -27,12 +27,12 @@ const App: () => ReactNode = () => {
   const [player, updatePlayer] = useState(1);
 
   const updateGameBoard = (value: number | null, row: number, cell: number) => {
-    const updatedRow = board[row];
+    console.log(`player: ${player} clicked on row ${row}, cell ${cell}`);
 
-    updatedRow.splice(cell, 1, player);
-    board.splice(row, 1, updatedRow);
+    board[row].splice(cell, 1, player);
+    board.splice(row, 1, board[row]);
 
-    updatePlayer(player === 1 ? 0 : player);
+    updatePlayer(player === 1 ? 0 : 1);
     updateBoard(board);
   };
 
