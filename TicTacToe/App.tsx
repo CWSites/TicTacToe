@@ -6,21 +6,22 @@
  * @flow strict-local
  */
 
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import {
   Alert,
   Pressable,
   SafeAreaView,
   StyleSheet,
+  StatusBar,
   Text,
-  useWindowDimensions,
   View,
 } from 'react-native';
 
-type Row = Array<null | number>;
+type Row = Array<null | Player>;
+type Player = 0 | 1;
 
-const playerOneMark: number = 1;
-const playerTwoMark: number = 0;
+const playerOneMark: Player = 1;
+const playerTwoMark: Player = 0;
 
 const defaultBoard: Array<Row> = [
   [null, null, null],
@@ -29,9 +30,21 @@ const defaultBoard: Array<Row> = [
 ];
 
 const App: () => ReactNode = () => {
-  const [board, updateBoard] = useState(defaultBoard);
-  const [player, updatePlayer] = useState(1);
+  const [board, updateBoard] = useState<Array<Row>>(defaultBoard);
+  const [player, updatePlayer] = useState<Player>(1);
   const [turn, countTurn] = useState(1);
+  const [boardReset, updateBoardReset] = useState<Boolean>(false);
+
+  useEffect(() => {
+    if (boardReset) {
+      updateBoard([
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ]);
+      updateBoardReset(false);
+    }
+  }, [boardReset]);
 
   const displayWinnerAlert = (winner: number) => {
     const msg = winner > 0 ? `Player ${winner} wins!` : 'Tie Game';
@@ -41,13 +54,14 @@ const App: () => ReactNode = () => {
   };
 
   const resetBoard = () => {
-    console.log('reset board...');
-    updateBoard(defaultBoard);
-    console.log(board);
+    updateBoard([
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+    ]);
     countTurn(1);
-    console.log(turn);
     updatePlayer(1);
-    console.log(player);
+    updateBoardReset(true);
   };
 
   const updateGameBoard = (row: number, cell: number) => {
@@ -63,11 +77,11 @@ const App: () => ReactNode = () => {
     gameStatus();
   };
 
-  const checkArray = (playerMark: number, array: Row) => {
+  const checkArray = (playerMark: Player, array: Row) => {
     return array.filter((x) => x === playerMark).length === 3;
   };
 
-  const checkSolutions = (playerMark: number, solutions: Array<Row>) => {
+  const checkSolutions = (playerMark: Player, solutions: Array<Row>) => {
     for (let i = 0; i < solutions.length; i++) {
       if (checkArray(playerMark, solutions[i])) {
         return true;
@@ -106,7 +120,6 @@ const App: () => ReactNode = () => {
       } else if (checkSolutions(playerTwoMark, possibleSolutions)) {
         displayWinnerAlert(2);
       } else {
-        // board full, nobody wins
         if (turn === 9) {
           displayWinnerAlert(0);
         }
@@ -115,26 +128,29 @@ const App: () => ReactNode = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.board}>
-        {board.map((row, rowIndex) => (
-          <View key={rowIndex} style={styles.row}>
-            {row.map((value, cellIndex) => (
-              <Pressable
-                key={`${rowIndex}-${cellIndex}`}
-                onPress={() => updateGameBoard(rowIndex, cellIndex)}
-                style={styles.square}>
-                <View>
-                  <Text style={styles.mark}>
-                    {value === 1 ? 'X' : value === 0 ? 'O' : ''}
-                  </Text>
-                </View>
-              </Pressable>
-            ))}
-          </View>
-        ))}
-      </View>
-    </SafeAreaView>
+    <>
+      <StatusBar barStyle="dark-content" />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.board}>
+          {board.map((row, rowIndex) => (
+            <View key={rowIndex} style={styles.row}>
+              {row.map((value, cellIndex) => (
+                <Pressable
+                  key={`${rowIndex}-${cellIndex}`}
+                  onPress={() => updateGameBoard(rowIndex, cellIndex)}
+                  style={styles.square}>
+                  <View>
+                    <Text style={styles.mark}>
+                      {value === 1 ? 'X' : value === 0 ? 'O' : ''}
+                    </Text>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          ))}
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 
