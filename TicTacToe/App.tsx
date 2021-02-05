@@ -33,7 +33,7 @@ const App: () => ReactNode = () => {
   const [board, updateBoard] = useState<Array<Row>>(defaultBoard);
   const [player, updatePlayer] = useState<Player>(1);
   const [turn, countTurn] = useState(1);
-  const [boardReset, updateBoardReset] = useState<Boolean>(false);
+  const [boardReset, updateBoardReset] = useState(false);
 
   useEffect(() => {
     if (boardReset) {
