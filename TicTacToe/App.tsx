@@ -1,115 +1,102 @@
 /**
- * Sample React Native App
+ * Tic-Tac-Toe React Native App
  * https://github.com/facebook/react-native
  *
  * @format
  * @flow strict-local
  */
 
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useState} from 'react';
 import {
+  Pressable,
   SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
   StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const defaultBoard = [1, 0, 1, 0, 1, 0, null, 0, null];
 
 const App: () => ReactNode = () => {
-  const usingHermes =
-    typeof HermesInternal === 'object' && HermesInternal !== null;
+  const [board, updateBoard] = useState(defaultBoard);
+
+  const renderXO = (num: number | null) => {
+    return num === 1 ? 'X' : num === 0 ? 'O' : null;
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {!usingHermes ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.board}>
+          <View style={styles.row}>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[0])}</Text>
             </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[1])}</Text>
             </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[2])}</Text>
             </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
           </View>
-        </ScrollView>
+          <View style={styles.row}>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[3])}</Text>
+            </View>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[4])}</Text>
+            </View>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[5])}</Text>
+            </View>
+          </View>
+          <View style={styles.row}>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[6])}</Text>
+            </View>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[7])}</Text>
+            </View>
+            <View style={styles.square}>
+              <Text style={styles.mark}>{renderXO(board[8])}</Text>
+            </View>
+          </View>
+        </View>
       </SafeAreaView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  board: {
+    backgroundColor: '#fff',
   },
-  body: {
-    backgroundColor: Colors.white,
+  row: {
+    // backgroundColor: '#9b59b6',
+    flexDirection: 'row',
+    flexGrow: 1,
+    height: '33.33%',
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  square: {
+    alignItems: 'center',
+    // borderColor: '#e74c3c',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    flexGrow: 1,
+    justifyContent: 'center',
+    width: '33.33%',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
+  mark: {
+    // backgroundColor: '#ecf0f1',
+    color: '#34495e',
+    display: 'flex',
+    fontSize: 80,
     fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
   },
 });
 
