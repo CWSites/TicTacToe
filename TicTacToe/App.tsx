@@ -6,11 +6,11 @@
  * @flow strict-local
  */
 
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import {
+  Alert,
   Pressable,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -27,11 +27,24 @@ const App: () => ReactNode = () => {
   const [player, updatePlayer] = useState(1);
   const [turn, countTurn] = useState(1);
 
-  const updateGameBoard = (value: number | null, row: number, cell: number) => {
-    console.log(
-      `turn ${turn} - player: ${player} clicked on row ${row}, cell ${cell}`,
-    );
+  useEffect(() => {
+    resetBoard();
+  }, []);
 
+  const displayWinnerAlert = (winner: number) => {
+    const msg = winner > 0 ? `Player ${winner} wins!` : 'Tie Game';
+    Alert.alert('Game Over', msg, [
+      {text: 'Rematch', onPress: () => resetBoard()},
+    ]);
+  };
+
+  const resetBoard = () => {
+    console.log('reset board...');
+    countTurn(1);
+    updateBoard(defaultBoard);
+  };
+
+  const updateGameBoard = (row: number, cell: number) => {
     board[row].splice(cell, 1, player);
     board.splice(row, 1, board[row]);
 
@@ -52,26 +65,71 @@ const App: () => ReactNode = () => {
       rowTwo = board[1],
       rowThree = board[2];
 
-    if (turn === 9) {
-      console.log('board full');
-    }
-
     if (turn > 4) {
-      console.log('is there a winner?');
-
       // check rows (horizontal)
-      const pOneRowOne = checkArray(1, rowOne);
-      const pOneRowTw0 = checkArray(1, rowTwo);
-      const pOneRowThree = checkArray(1, rowThree);
+      const pOneRowOne = checkArray(pOneMark, rowOne);
+      const pOneRowTw0 = checkArray(pOneMark, rowTwo);
+      const pOneRowThree = checkArray(pOneMark, rowThree);
+
+      const pTwoRowOne = checkArray(pTwoMark, rowOne);
+      const pTwoRowTw0 = checkArray(pTwoMark, rowTwo);
+      const pTwoRowThree = checkArray(pTwoMark, rowThree);
 
       // check columns (vertical)
-      const pOneColOne = checkArray(1, [rowOne[0], rowTwo[0], rowThree[0]]);
-      const pOneColTwo = checkArray(1, [rowOne[1], rowTwo[1], rowThree[1]]);
-      const pOneColThree = checkArray(1, [rowOne[2], rowTwo[2], rowThree[2]]);
+      const pOneColOne = checkArray(pOneMark, [
+        rowOne[0],
+        rowTwo[0],
+        rowThree[0],
+      ]);
+      const pOneColTwo = checkArray(pOneMark, [
+        rowOne[1],
+        rowTwo[1],
+        rowThree[1],
+      ]);
+      const pOneColThree = checkArray(pOneMark, [
+        rowOne[2],
+        rowTwo[2],
+        rowThree[2],
+      ]);
+
+      const pTwoColOne = checkArray(pTwoMark, [
+        rowOne[0],
+        rowTwo[0],
+        rowThree[0],
+      ]);
+      const pTwoColTwo = checkArray(pTwoMark, [
+        rowOne[1],
+        rowTwo[1],
+        rowThree[1],
+      ]);
+      const pTwoColThree = checkArray(pTwoMark, [
+        rowOne[2],
+        rowTwo[2],
+        rowThree[2],
+      ]);
 
       // check diagonal
-      const pOneDiagOne = checkArray(1, [rowOne[0], rowTwo[1], rowThree[2]]);
-      const pOneDiagTwo = checkArray(1, [rowOne[2], rowTwo[1], rowThree[0]]);
+      const pOneDiagOne = checkArray(pOneMark, [
+        rowOne[0],
+        rowTwo[1],
+        rowThree[2],
+      ]);
+      const pOneDiagTwo = checkArray(pOneMark, [
+        rowOne[2],
+        rowTwo[1],
+        rowThree[0],
+      ]);
+
+      const pTwoDiagOne = checkArray(pTwoMark, [
+        rowOne[0],
+        rowTwo[1],
+        rowThree[2],
+      ]);
+      const pTwoDiagTwo = checkArray(pTwoMark, [
+        rowOne[2],
+        rowTwo[1],
+        rowThree[0],
+      ]);
 
       if (
         pOneRowOne ||
@@ -83,35 +141,50 @@ const App: () => ReactNode = () => {
         pOneDiagOne ||
         pOneDiagTwo
       ) {
-        console.log('Player One Wins!');
+        displayWinnerAlert(1);
       }
+
+      if (
+        pTwoRowOne ||
+        pTwoRowTw0 ||
+        pTwoRowThree ||
+        pTwoColOne ||
+        pTwoColTwo ||
+        pTwoColThree ||
+        pTwoDiagOne ||
+        pTwoDiagTwo
+      ) {
+        displayWinnerAlert(2);
+      }
+    }
+
+    if (turn === 9) {
+      console.log('board full');
+      displayWinnerAlert(0);
     }
   };
 
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView style={styles.container}>
-        <View style={styles.board}>
-          {board.map((row, rowIndex) => (
-            <View key={rowIndex} style={styles.row}>
-              {row.map((value, cellIndex) => (
-                <Pressable
-                  key={`${rowIndex}-${cellIndex}`}
-                  onPress={() => updateGameBoard(value, rowIndex, cellIndex)}
-                  style={styles.square}>
-                  <View>
-                    <Text style={styles.mark}>
-                      {value === 1 ? 'X' : value === 0 ? 'O' : ''}
-                    </Text>
-                  </View>
-                </Pressable>
-              ))}
-            </View>
-          ))}
-        </View>
-      </SafeAreaView>
-    </>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.board}>
+        {board.map((row, rowIndex) => (
+          <View key={rowIndex} style={styles.row}>
+            {row.map((value, cellIndex) => (
+              <Pressable
+                key={`${rowIndex}-${cellIndex}`}
+                onPress={() => updateGameBoard(rowIndex, cellIndex)}
+                style={styles.square}>
+                <View>
+                  <Text style={styles.mark}>
+                    {value === 1 ? 'X' : value === 0 ? 'O' : ''}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
+          </View>
+        ))}
+      </View>
+    </SafeAreaView>
   );
 };
 
