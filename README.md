@@ -2,12 +2,18 @@
 
 Friendly game of tic-tac-toe utilizing React Native & modern features of React (hooks)
 
+### To start run the following commands
+
+- `cd TicTacToe`
+- `npx react-native start`
+- `npx react-native run-ios`
+
 ## Acceptance Criteria
 
 - [x] Allow 2 players to play tic tac toe (Follow the rules of tic-tac-toe)
 - [x] Have a 3x3 grid on which the players can play
 - [x] Allow the players to take turns marking spaces on the 3x3 grid
-- [ ] Recognize when a player has won and declare that player as victorious
+- [x] Recognize when a player has won and declare that player as victorious
 - [ ] Allow the user to start a new game
 
 ## Game Rules
@@ -26,6 +32,7 @@ Friendly game of tic-tac-toe utilizing React Native & modern features of React (
 
 - No memory of previous games
 - When there is a winner, the game will end
+- No unit testing in place for the sake of time
 
 ## Troubleshooting
 

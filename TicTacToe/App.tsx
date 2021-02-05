@@ -6,17 +6,23 @@
  * @flow strict-local
  */
 
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, {ReactNode, useState} from 'react';
 import {
   Alert,
   Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
-const defaultBoard: Array<Array<number | null>> = [
+type Row = Array<null | number>;
+
+const playerOneMark: number = 1;
+const playerTwoMark: number = 0;
+
+const defaultBoard: Array<Row> = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
@@ -27,10 +33,6 @@ const App: () => ReactNode = () => {
   const [player, updatePlayer] = useState(1);
   const [turn, countTurn] = useState(1);
 
-  useEffect(() => {
-    resetBoard();
-  }, []);
-
   const displayWinnerAlert = (winner: number) => {
     const msg = winner > 0 ? `Player ${winner} wins!` : 'Tie Game';
     Alert.alert('Game Over', msg, [
@@ -40,127 +42,75 @@ const App: () => ReactNode = () => {
 
   const resetBoard = () => {
     console.log('reset board...');
-    countTurn(1);
     updateBoard(defaultBoard);
+    console.log(board);
+    countTurn(1);
+    console.log(turn);
+    updatePlayer(1);
+    console.log(player);
   };
 
   const updateGameBoard = (row: number, cell: number) => {
+    // update row
     board[row].splice(cell, 1, player);
+
+    // update board
     board.splice(row, 1, board[row]);
 
-    updatePlayer(player === 1 ? 0 : 1);
+    updatePlayer(player === playerOneMark ? playerTwoMark : playerOneMark);
     updateBoard(board);
     countTurn(turn + 1);
     gameStatus();
   };
 
-  const checkArray = (playerMark: number, array: Array<number | null>) => {
+  const checkArray = (playerMark: number, array: Row) => {
     return array.filter((x) => x === playerMark).length === 3;
   };
 
-  const gameStatus = () => {
-    const pOneMark = 1,
-      pTwoMark = 0,
-      rowOne = board[0],
-      rowTwo = board[1],
-      rowThree = board[2];
-
-    if (turn > 4) {
-      // check rows (horizontal)
-      const pOneRowOne = checkArray(pOneMark, rowOne);
-      const pOneRowTw0 = checkArray(pOneMark, rowTwo);
-      const pOneRowThree = checkArray(pOneMark, rowThree);
-
-      const pTwoRowOne = checkArray(pTwoMark, rowOne);
-      const pTwoRowTw0 = checkArray(pTwoMark, rowTwo);
-      const pTwoRowThree = checkArray(pTwoMark, rowThree);
-
-      // check columns (vertical)
-      const pOneColOne = checkArray(pOneMark, [
-        rowOne[0],
-        rowTwo[0],
-        rowThree[0],
-      ]);
-      const pOneColTwo = checkArray(pOneMark, [
-        rowOne[1],
-        rowTwo[1],
-        rowThree[1],
-      ]);
-      const pOneColThree = checkArray(pOneMark, [
-        rowOne[2],
-        rowTwo[2],
-        rowThree[2],
-      ]);
-
-      const pTwoColOne = checkArray(pTwoMark, [
-        rowOne[0],
-        rowTwo[0],
-        rowThree[0],
-      ]);
-      const pTwoColTwo = checkArray(pTwoMark, [
-        rowOne[1],
-        rowTwo[1],
-        rowThree[1],
-      ]);
-      const pTwoColThree = checkArray(pTwoMark, [
-        rowOne[2],
-        rowTwo[2],
-        rowThree[2],
-      ]);
-
-      // check diagonal
-      const pOneDiagOne = checkArray(pOneMark, [
-        rowOne[0],
-        rowTwo[1],
-        rowThree[2],
-      ]);
-      const pOneDiagTwo = checkArray(pOneMark, [
-        rowOne[2],
-        rowTwo[1],
-        rowThree[0],
-      ]);
-
-      const pTwoDiagOne = checkArray(pTwoMark, [
-        rowOne[0],
-        rowTwo[1],
-        rowThree[2],
-      ]);
-      const pTwoDiagTwo = checkArray(pTwoMark, [
-        rowOne[2],
-        rowTwo[1],
-        rowThree[0],
-      ]);
-
-      if (
-        pOneRowOne ||
-        pOneRowTw0 ||
-        pOneRowThree ||
-        pOneColOne ||
-        pOneColTwo ||
-        pOneColThree ||
-        pOneDiagOne ||
-        pOneDiagTwo
-      ) {
-        displayWinnerAlert(1);
-      }
-
-      if (
-        pTwoRowOne ||
-        pTwoRowTw0 ||
-        pTwoRowThree ||
-        pTwoColOne ||
-        pTwoColTwo ||
-        pTwoColThree ||
-        pTwoDiagOne ||
-        pTwoDiagTwo
-      ) {
-        displayWinnerAlert(2);
+  const checkSolutions = (playerMark: number, solutions: Array<Row>) => {
+    for (let i = 0; i < solutions.length; i++) {
+      if (checkArray(playerMark, solutions[i])) {
+        return true;
       }
     }
 
-    if (turn === 9) {
-      console.log('board full');
-      displayWinnerAlert(0);
+    return false;
+  };
+
+  const gameStatus = () => {
+    if (turn > 4) {
+      const rowOne = board[0],
+        rowTwo = board[1],
+        rowThree = board[2];
+
+      const colOne = [rowOne[0], rowTwo[0], rowThree[0]],
+        colTwo = [rowOne[1], rowTwo[1], rowThree[1]],
+        colThree = [rowOne[2], rowTwo[2], rowThree[2]];
+
+      const diagOne = [rowOne[0], rowTwo[1], rowThree[2]],
+        diagTwo = [rowOne[2], rowTwo[1], rowThree[0]];
+
+      const possibleSolutions: Array<Row> = [
+        colOne,
+        colTwo,
+        colThree,
+        diagOne,
+        diagTwo,
+        rowOne,
+        rowTwo,
+        rowThree,
+      ];
+
+      if (checkSolutions(playerOneMark, possibleSolutions)) {
+        displayWinnerAlert(1);
+      } else if (checkSolutions(playerTwoMark, possibleSolutions)) {
+        displayWinnerAlert(2);
+      } else {
+        // board full, nobody wins
+        if (turn === 9) {
+          displayWinnerAlert(0);
+        }
+      }
     }
   };
 
