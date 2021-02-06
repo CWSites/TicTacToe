@@ -14,7 +14,7 @@ Friendly game of tic-tac-toe utilizing React Native & modern features of React (
 - [x] Have a 3x3 grid on which the players can play
 - [x] Allow the players to take turns marking spaces on the 3x3 grid
 - [x] Recognize when a player has won and declare that player as victorious
-- [ ] Allow the user to start a new game
+- [x] Allow the user to start a new game
 
 ## Game Rules
 
@@ -33,6 +33,7 @@ Friendly game of tic-tac-toe utilizing React Native & modern features of React (
 - No memory of previous games
 - When there is a winner, the game will end
 - No unit testing in place for the sake of time
+- reseting the board doesn't work with `defaultBoard`, not sure why but didn't want to spend more than 30 minutes on it.
 
 ## Troubleshooting
 
