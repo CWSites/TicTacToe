@@ -37,11 +37,7 @@ const App: () => ReactNode = () => {
 
   useEffect(() => {
     if (boardReset) {
-      updateBoard([
-        [null, null, null],
-        [null, null, null],
-        [null, null, null],
-      ]);
+      console.log(board);
       updateBoardReset(false);
     }
   }, [boardReset]);
@@ -54,6 +50,7 @@ const App: () => ReactNode = () => {
   };
 
   const resetBoard = () => {
+    // TO-DO: figure out why `defaultBoard` doesn't work here.
     updateBoard([
       [null, null, null],
       [null, null, null],
