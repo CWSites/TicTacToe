@@ -28,13 +28,6 @@ Friendly game of tic-tac-toe utilizing React Native & modern features of React (
 - The players will be using the same device, taking turns
 - The first player to act will be `X`
 
-## Constraints
-
-- No memory of previous games
-- When there is a winner, the game will end
-- No unit testing in place for the sake of time
-- reseting the board doesn't work with `defaultBoard`, not sure why but didn't want to spend more than 30 minutes on it.
-
 ## Troubleshooting
 
 - Since I work on OS X I decided to move forward with the React Native [directions](https://reactnative.dev/docs/environment-setup) for using Xcode & CocoaPods.
